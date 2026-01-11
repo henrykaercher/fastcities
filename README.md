@@ -1,4 +1,4 @@
-#fastcities.py
+# Fastcities
 
 Fastcities.py is a CLI-like Python script that automates page uploads to NeoCities.
 It checks for recently modified files and uploads only the changed ones, instead
