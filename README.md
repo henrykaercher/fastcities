@@ -7,7 +7,6 @@ of pushing the entire blog every time.
 ## Notes
 - This script still needs some work regarding error handling.
 - 'last_update' need to be check when first open the script.
-- API Key does not work for uploads yet, so use your password instead.
 - I know this is not 'python standard', and it will keep that way.
 
 ## How to use
