@@ -1,22 +1,18 @@
-# fastcities.py - v0.1 - Public Domain - https://github.com/henrykaercher/fastcities
-
 """
-This script still needs some work regarding error handling, but it works correctly
-as long as the user provides valid input.
+    fastcities.py - v0.2 - Public Domain - https://github.com/henrykaercher/fastcities
 
-The script stores the path provided by the user in a `config.txt` file and assumes
-that this path points to the root directory of the blog. Based on that, it is able
-to recursively scan all files, detect which ones were modified after the last
-update timestamp, filter only the changed files, sanitize their paths, build the
-appropriate `curl` command, and finally push the updates to NeoCities.
+    This script still needs some work regarding error handling, but it works correctly
+    as long as the user provides valid input.
 
-The usage is intentionally simple. However, the first `Last Update` value must be
-set manually. To do this, just run the script once: it will generate `config.txt`,
-which you can then edit by hand to set the initial date.
+    The script stores the path provided by the user in a `config.txt` file and assumes
+    that this path points to the root directory of the blog. Based on that, it is able
+    to recursively scan all files, detect which ones were modified after the last
+    update timestamp, filter only the changed files, 'sanitize' their paths, build the
+    appropriate `curl` command, and finally push the updates to NeoCities.
 
-Note: although the script is able to retrieve an API key from the NeoCities API,
-I was not able to make uploads work using the API key. For now, uploads are done
-using the regular username/password authentication method.
+    The usage is intentionally simple. However, the first `Last Update` value must be
+    set manually. To do this, just run the script once: it will generate `config.txt`,
+    which you can then edit by hand to set the initial date.
 """
 
 import os
@@ -70,6 +66,7 @@ def update_change_date():
     options['last_update'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     lines = []
 
+    #TODO: pattern for inserting data, use a separated function that can receive the data and works with all configs
     with open('config.txt', 'r') as f:
         for line in f:
             if line.startswith('Last Update:'):
@@ -123,12 +120,9 @@ def push_paths():
 
     print(upload_args)
 
-    user = input('Site name: ')
-    pw = getpass.getpass('Password: ')
-
     cmd = [
         'curl',
-        '-u', f'{user}:{pw}',
+        '-H', f'Authorization: Bearer {options['api_key']}',
     ]
 
     cmd.extend(upload_args)
@@ -167,7 +161,7 @@ def push_updates():
 
     if response.lower() == 'y' and changed_files:
         push_paths()
-        sleep(50)
+        sleep(5)
         current_state = global_state[0]
     else:
         print('Update canceled')
@@ -205,7 +199,6 @@ def check_apikey():
                 return value != ''
     return False
 
-#TODO: check if API Key from NeoCities API can in fact run uploads or not, fow now just using the password
 def get_apikey():
     global current_state
     global options
@@ -259,7 +252,7 @@ def menu():
     os.system('cls' if os.name == 'nt' else 'clear')
 
     if current_state == global_state[0]:
-        print('Config status:' + 
+        print('[CONFIG STATUS]' + 
               '\n' + 'Path: ' + str(options['blog_path']) +
               '\n' + 'API: ' + str(options['is_reg']) +
               '\n' + 'Last Update: ' + options['last_update'] + 
