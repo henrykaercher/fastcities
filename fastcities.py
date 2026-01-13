@@ -1,5 +1,5 @@
 """
-    fastcities.py - v0.2 - Public Domain - https://github.com/henrykaercher/fastcities
+    fastcities.py - v0.2.1 - Public Domain - https://github.com/henrykaercher/fastcities
 
     This script still needs some work regarding error handling, but it works correctly
     as long as the user provides valid input.
@@ -84,6 +84,11 @@ def search_path(path):
         '%Y-%m-%d %H:%M:%S'
     )
 
+    if not os.path.isdir(options['blog_path']):
+        print('Configured blog path is no longer valid')
+        sleep(5)
+        return
+
     ignore_dirs = {'.git', '.hg', '.svn', '.idea', '.vscode'}
     changed_files = []
 
@@ -109,6 +114,11 @@ def search_path(path):
 
 def push_paths():
     global options
+
+    if not os.path.isdir(options['blog_path']):
+        print('Configured blog path is no longer valid')
+        sleep(5)
+        return
 
     changed_files = search_path(options['blog_path'])
 
@@ -168,26 +178,29 @@ def push_updates():
         sleep(5)
         current_state = global_state[0]
 
-#TODO: check if it is a valid path
 def register_path():
     os.system('cls' if os.name == 'nt' else 'clear')
 
     global options
     global current_state
 
-    new_path = input('Your blog path: ')
-    options['blog_path'] = new_path
-    lines = []
+    new_path = os.path.expanduser(input('Your blog path: '))
+    if os.path.isdir(new_path):
+        options['blog_path'] = new_path
+        lines = []
 
-    with open('config.txt', 'r') as f:
-        for line in f:
-            if line.startswith('Path:'):
-                lines.append('Path:' + new_path + '\n')
-            else:
-                lines.append(line)
+        with open('config.txt', 'r') as f:
+            for line in f:
+                if line.startswith('Path:'):
+                    lines.append('Path:' + new_path + '\n')
+                else:
+                    lines.append(line)
 
-    with open('config.txt', 'w') as f:
-        f.writelines(lines)
+        with open('config.txt', 'w') as f:
+            f.writelines(lines)
+    else:
+        print('Invalid path...')
+        sleep(5)
 
     current_state = global_state[0]
 
