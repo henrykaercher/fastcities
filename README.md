@@ -17,10 +17,10 @@ python fastcities.py
 ```
 
 The aplicaton has 4 options:
-- [1]: Resgiter new path
-- [2]: Resgiter new API
-- [3]: Push updates to NeoCities
-- [4]: Exit
+- [1]: Resgiter new path;
+- [2]: Resgiter new API;
+- [3]: Push updates to NeoCities;
+- [4]: Exit;
 
 ## Requirements
 - Python 3
